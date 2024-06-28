@@ -1,20 +1,9 @@
 ﻿# CMakeList.txt : CMake project for GcodeRounder, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.13)
 project(GcodeRounder VERSION 1.0 LANGUAGES CXX)
 get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
-
-########################
-# settings
-########################
-
-if (IS_SUBPROJECT)
-    message(STATUS "GcodeRounder не тестируется в режиме подмодуля")
-    set(MYLIB_TESTING OFF)
-endif()
-
-option(MYLIB_TESTING "Включить тестирование" ON)
 
 #######################
 # compilation options
@@ -30,18 +19,15 @@ if (POLICY CMP0141)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-# set source executable for this project & source lib
-set (SOURCE_EXE main.cpp)
+# add subdirectories
 
-set (SOURCE_LIB GcodeRounder.cpp)
+add_subdirectory(libs/GcodeRounder)
 
-# add static library
-add_library(GcodeGounder STATIC ${SOURCE_LIB})
+add_subdirectory(libs/main)
 
-# add executable
-add_executable (main ${SOURCE_EXE})
+# link subdirs
 
-target_link_libraries(main GcodeGounder)
+target_link_libraries(main PRIVATE GcodeRounder)
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
